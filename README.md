@@ -1,6 +1,6 @@
 # MemberOnly Web App
 This is the Member Only project to create a simple CRUD app with Typescript, Node, Express, PostgreSQL and authentication with passport.js local startegy. <br>
-**Demo**: :point_right:[**Not yet ready**]():point_left:. <br>
+**Demo**: :point_right:[**Click here**](https://memberonlyts.onrender.com/):point_left:. <br>
 Please allow up to 1 minutes for the website to load.
 ## Install and set up
 Follow these step below to set up the website in your local machine.
@@ -14,7 +14,7 @@ git clone https://github.com/YourUserName/memberOnlyTS
 ```
 2. Navigate to the project folder:<br>
 ```bash
-cd miniMessageBoard
+cd memberOnlyTS
 ```
 3. Install the dependencies:<br>
 ```bash
@@ -26,12 +26,13 @@ touch .env
 ```
 5. Add your environment inside the file: <br>
 ```bash
-PGHOST=
-PGDATABASE=
-PGUSER=
-PGPASSWORD=
-ENDPOINT_ID=
-AUTHENICATIONPASSWORD=
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+PORT=
+FOO_COOKIE_SECRET=
 ```
 6. Start the dev server:<br>
 ```bash
