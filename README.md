@@ -10,7 +10,7 @@ Ensure [Node](https://nodejs.org/en) and [npm](https://www.npmjs.comnode) are in
 ### Steps:
 1. Clone the repo: <br>
 ```bash
-git clone https://github.com/YourUserName/miniMessageBoard
+git clone https://github.com/YourUserName/memberOnlyTS
 ```
 2. Navigate to the project folder:<br>
 ```bash
@@ -52,7 +52,6 @@ npm start
 + [PostgreSQL](https://www.postgresql.org/) SQL database for storing inventory information. <br>
 + [Typescript](https://www.postgresql.org/) strongly-typed language for building robust and scalable applications. <br>
 + [Passport](https://www.passportjs.org/)authentication middleware for managing user authentication and session handling in Node applications. <br>
-+ [AWS RDS](https://aws.amazon.com/rds/) amazon web service for hosting relational database 
 
 Database design: 
 ![Database](image.png)

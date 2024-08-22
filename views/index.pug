@@ -1,6 +1,33 @@
 extends layout
 
 block content
-    h1 #{title} 
-    p  Welcome to #{title}
+    div.nav
+      p.title Message Board
+      form.titlecomponent(action=`/logout` method='POST')
+        button.deletebutton(type='submit') Log out
+      form.titlecomponent(action=`/newmessage` method='GET')
+        button.deletebutton(type='submit') Send a message
+      if status === 'guest'
+        form.titlecomponent(action=`/newmember` method='GET')
+          button.deletebutton(type='submit') Become a member
+      else if status === 'member'
+        form.titlecomponent(action=`/newadmin` method='GET')
+          button.deletebutton(type='submit') Become an admin
+    ul
+      each message in messages
+        li.messagecontainer
+          div.titlecontainer
+            p.titlecomponent=message.title
+            if status === 'admin'
+              form.titlecomponent(action=`/delete/${message.id}` method='POST')
+                button.deletebutton(type='submit') 
+                 img(src="images/bin.svg")
+          p.content= message.body
+
+          if status === 'member' || status === 'admin'
+            p.messageinfo  #{message.first_name} #{message.last_name} #{message.formattedCreatedAt}
+
+              
+    if !messages.length
+      p No messages available.
 
