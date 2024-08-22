@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    
+    if errors && errors.length > 0
+     div(class="error-container")
+      ul
+      each error in errors
+       li(class="error-message")
+        span #{error.msg}
+
+    form.login(action="/newmember", method="POST")
+        p.title Become a member
+        div.formcomponent
+            label(for="secretpass") Secret password 
+            input(type="password"
+                  name="secretpass"
+                  value=(formInfo ? formInfo.secretpass : ''))
+
+        button.formbutton(type="submit") Send

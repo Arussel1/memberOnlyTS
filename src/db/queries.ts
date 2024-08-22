@@ -57,4 +57,8 @@ const addMessage = async (title: string, body: string, user_id: number): Promise
   );
 }
 
-export { checkUsernameExists,  getUser, addUser, getUserById, getMessage, addMessage };
+const updateStatus = async (id: number, newStatus: String): Promise<void> => {
+  await pool.query('UPDATE users SET status=$1 WHERE id=$2', [newStatus,id]);
+}
+
+export { checkUsernameExists,  getUser, addUser, getUserById, getMessage, addMessage, updateStatus };

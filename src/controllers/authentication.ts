@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction  } from 'express';
 import { body, validationResult } from 'express-validator';
 import passport from 'passport';
-import { checkUsernameExists, getUser, addUser, User } from '../db/queries';
+import { checkUsernameExists, getUser, addUser, User, getUserById, updateStatus} from '../db/queries';
+import pool from '../db/pool';
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if(req.isAuthenticated()){
@@ -154,3 +155,73 @@ export const controlLoginPost = [
     }
   }
 ];
+
+export const handleNewMemberPost = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (req.user && (req.user as User).id) {
+      const user = await getUserById((req.user as User).id);
+
+      if (!user) {
+        return res.status(404).render('newmember', {
+          errors: [{ msg: 'User not found' }],
+          formInfo: req.body,
+        });
+      }
+      if (req.body.secretpass !== user.username) {
+        return res.render('newmember', {
+          errors: [{ msg: 'Incorrect secret pass. Please try again' }],
+          formInfo: req.body,
+        });
+      } else {
+        await updateStatus((req.user as User).id, "member");
+        return res.redirect('/'); 
+      }
+    } else {
+      return res.status(401).render('newmember', {
+        errors: [{ msg: 'Unauthorized access' }],
+        formInfo: req.body,
+      });
+    }
+  } catch (error) {
+    console.error('Error handling new member post:', error);
+    return res.status(500).render('newmember', {
+      errors: [{ msg: 'An unexpected error occurred. Please try again later.' }],
+      formInfo: req.body,
+    });
+  }
+};
+
+export const handleNewAdminPost = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (req.user && (req.user as User).id) {
+      const user = await getUserById((req.user as User).id);
+
+      if (!user) {
+        return res.status(404).render('newadmin', {
+          errors: [{ msg: 'User not found' }],
+          formInfo: req.body,
+        });
+      }
+      if (req.body.secretpass !== user.firstname) {
+        return res.render('newadmin', {
+          errors: [{ msg: 'Incorrect secret pass. Please try again' }],
+          formInfo: req.body,
+        });
+      } else {
+        await updateStatus((req.user as User).id, "admin");
+        return res.redirect('/'); 
+      }
+    } else {
+      return res.status(401).render('newadmin', {
+        errors: [{ msg: 'Unauthorized access' }],
+        formInfo: req.body,
+      });
+    }
+  } catch (error) {
+    console.error('Error handling new newadmin post:', error);
+    return res.status(500).render('newadmin', {
+      errors: [{ msg: 'An unexpected error occurred. Please try again later.' }],
+      formInfo: req.body,
+    });
+  }
+};

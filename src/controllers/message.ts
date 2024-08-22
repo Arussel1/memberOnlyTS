@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
 import { getMessage, getUserById, User, Message, MessageWithFormatted, addMessage } from '../db/queries';
+import pool from '../db/pool';
 
 export const renderMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,3 +77,9 @@ export const handleNewMessagePost =   [
       }
     }
   ];
+
+export const handleMessageDeletePost = async (req:Request, res:Response, next:NextFunction): Promise<void> => {
+    const messageId = req.params.id ;
+    await pool.query('DELETE FROM message WHERE id=$1',[+messageId]);
+    res.redirect('/')
+}

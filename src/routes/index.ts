@@ -1,6 +1,6 @@
 import express from 'express';
-import { controlSignUpPost, controlLoginPost, isAuthenticated } from '../controllers/authentication';
-import { renderMessage, handleNewMessagePost } from '../controllers/message'
+import { controlSignUpPost, controlLoginPost, isAuthenticated, handleNewMemberPost, handleNewAdminPost } from '../controllers/authentication';
+import { renderMessage, handleNewMessagePost, handleMessageDeletePost,  } from '../controllers/message'
 const router = express.Router();
 
 router.get('/', isAuthenticated, renderMessage);
@@ -36,13 +36,19 @@ router.post('/logout', (req, res, next) => {
   });
 });
 
+router.post('/delete/:id', handleMessageDeletePost);
+
 router.get('/newmember', (req, res, next) => {
   res.render('newmember');
 })
 
+router.post('/newmember', handleNewMemberPost)
+
 router.get('/newadmin', (req, res, next) => {
   res.render('newadmin');
 })
+
+router.post('/newadmin', handleNewAdminPost)
 
 router.get('/newmessage', (req, res, next) => {
   if(!req.isAuthenticated()){
