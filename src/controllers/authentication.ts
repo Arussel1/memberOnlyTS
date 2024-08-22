@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction  } from 'express';
 import { body, validationResult } from 'express-validator';
 import passport from 'passport';
-import { checkUsernameExists, getUser, addUser, User, getUserById, updateStatus} from '../db/queries';
-import pool from '../db/pool';
+import { UserQueries, MessageQueries, User } from '../db/queries';
+
+const userQueries = new UserQueries();
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if(req.isAuthenticated()){
@@ -58,14 +59,14 @@ export const controlSignUpPost = [
 
     try {
       const { firstname, lastname, username, password } = req.body;
-      const usernameExists = await checkUsernameExists(username);
+      const usernameExists = await userQueries.checkUsernameExists(username);
       if (usernameExists) {
         return res.render('register', {
           errors: [{ msg: 'Username already exists' }],
           formInfo: req.body,
         });
       }
-      await addUser(firstname, lastname, username, password);
+      await userQueries.addUser(firstname, lastname, username, password);
       return res.redirect('/login');
     } catch (error) {
       console.error('Error during user sign-up:', error);
@@ -110,7 +111,7 @@ export const controlLoginPost = [
 
     try {
       const { username, password } = req.body;
-      const user = await getUser(username);
+      const user = await userQueries.getUser(username);
       if (!user) {
         return res.render('login', {
           errors: [{ msg: 'Username does not exist' }],
@@ -159,7 +160,7 @@ export const controlLoginPost = [
 export const handleNewMemberPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.user && (req.user as User).id) {
-      const user = await getUserById((req.user as User).id);
+      const user = await userQueries.getUserById((req.user as User).id);
 
       if (!user) {
         return res.status(404).render('newmember', {
@@ -173,7 +174,7 @@ export const handleNewMemberPost = async (req: Request, res: Response, next: Nex
           formInfo: req.body,
         });
       } else {
-        await updateStatus((req.user as User).id, "member");
+        await userQueries.updateStatus((req.user as User).id, "member");
         return res.redirect('/'); 
       }
     } else {
@@ -194,7 +195,7 @@ export const handleNewMemberPost = async (req: Request, res: Response, next: Nex
 export const handleNewAdminPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.user && (req.user as User).id) {
-      const user = await getUserById((req.user as User).id);
+      const user = await userQueries.getUserById((req.user as User).id);
 
       if (!user) {
         return res.status(404).render('newadmin', {
@@ -208,7 +209,7 @@ export const handleNewAdminPost = async (req: Request, res: Response, next: Next
           formInfo: req.body,
         });
       } else {
-        await updateStatus((req.user as User).id, "admin");
+        await userQueries.updateStatus((req.user as User).id, "admin");
         return res.redirect('/'); 
       }
     } else {

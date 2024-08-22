@@ -1,15 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { DateTime } from 'luxon';
-import { getMessage, getUserById, User, Message, MessageWithFormatted, addMessage } from '../db/queries';
+import { User, Message, MessageWithFormatted, UserQueries, MessageQueries } from '../db/queries';
 import pool from '../db/pool';
+
+const userQueries = new UserQueries();
+const messageQueries = new MessageQueries();
 
 export const renderMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const messages: Message[] = await getMessage();
+        const messages: Message[] = await messageQueries.getMessage();
         const userPromises = messages.map(async (message) => {
             const createdAt = DateTime.fromJSDate(message.created_at);
-            const user = await getUserById(message.user_id);
+            const user = await userQueries.getUserById(message.user_id);
 
             return {
                 ...message,
@@ -25,7 +28,7 @@ export const renderMessage = async (req: Request, res: Response, next: NextFunct
 
         let currentUser: User | null = null;
         if (req.user && (req.user as User).id) {
-            currentUser = await getUserById((req.user as User).id);
+            currentUser = await userQueries.getUserById((req.user as User).id);
         }
 
         res.render('index', {
@@ -65,7 +68,7 @@ export const handleNewMessagePost =   [
             user_id  = (req.user as User).id;
         }
         if (user_id !== null) {
-            await addMessage(title, body, user_id);
+            await messageQueries.addMessage(title, body, user_id);
           }
         return res.redirect('/');
       } catch (error) {
